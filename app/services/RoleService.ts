@@ -2,7 +2,6 @@ import bcrypt from 'bcrypt';
 import RoleInterface from "../repository/RoleRepository/RoleInterface";
 import ServiceType from "../types/ServiceType";
 import RoleValidation from '../validation/RoleValidation';
-import 'moment-timezone';
 
 class RoleService {
     constructor(

@@ -2,7 +2,6 @@ import express from 'express';
 
 import RouteGroup from 'express-route-grouping';
 
-
 import UserRepository from '../app/repository/UserRepository/UserRepository';
 import UserService from '../app/services/UserService';
 import UserController from '../app/controllers/UserController';
@@ -67,8 +66,8 @@ const webhookController = new PaymentController(webhookService)
 
 const config = new RouteGroup('/config', route)
 config.group('/', cg => {
+    cg.get('test', webhookController.test.bind(webhookController))
     cg.post('webhook/payment', webhookController.main.bind(webhookController))
-    
 })
 
 const publicApi = new RouteGroup('/public', route)

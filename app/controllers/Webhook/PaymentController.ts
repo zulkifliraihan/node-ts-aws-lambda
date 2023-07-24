@@ -6,6 +6,11 @@ import ServiceType from "../../types/ServiceType";
 class PaymentController{
     constructor(private paymentService: PaymentService) {}
 
+    async test(req: Request, res: Response): Promise <any> {
+      return res.status(200).json({
+        message: "Success"
+      });
+    } 
     async main(req: Request, res: Response): Promise <any> {
         try {
 

@@ -132,33 +132,6 @@ class UserController{
       }
     } 
 
-    async updateForPublic(req: Request, res: Response): Promise <any> {
-      const currentUser: any = req.session.currentUser
-      const id: number = parseInt(currentUser.id)
-      
-      try {
-          const users: ServiceType = await this.userService.updateForPublic(id, req.body)
-          
-          let response;
-          if (users.status) {
-            response = ReturnResponse.success(users.response, users.data);
-          } 
-          else {
-            if (users.response == "validation") {
-              response = ReturnResponse.errorValidation(users.errors, users.message);
-            }
-            else {
-              response = ReturnResponse.errorServer(users.data);
-            }
-          }
-          return res.status(response.response_code).json(response);
-          
-      } 
-      catch (error: any) {
-          const response = ReturnResponse.errorServer( error.message)
-          return res.status(response.response_code).json(response);
-      }
-    } 
 }
 
 export default UserController
