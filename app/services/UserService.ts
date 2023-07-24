@@ -40,7 +40,19 @@ class UserService {
 
             return returnData
         }
+
+        if (data.gender !== 'male' && data.gender !== 'female') {
+            returnData = {
+                status: false,
+                response: "validation",
+                errors: "Invalid gender: It must be either male or female.",
+            };
+
+            return returnData
+        }
+
         const findUserByEmail = await this.userRepository.checkEmailData(data.email)
+
         if (findUserByEmail) {
             if (findUserByEmail.deletedAt === null) {
                 returnData = {
@@ -68,13 +80,9 @@ class UserService {
             password,
             profiles: {
                 create: {
-                    country_id : data.country_id,
-                    state_id : data.state_id,
-                    city_id : data.city_id,
                     firstName: data.first_name,
                     lastName: data.last_name,
-                    birthdayAt: birthdayDate,
-                    timezone: data.timezone
+                    gender: data.gender
                 }
             }
         }
@@ -128,6 +136,17 @@ class UserService {
 
             return returnData
         }
+
+        if (data.gender !== 'male' && data.gender !== 'female') {
+            returnData = {
+                status: false,
+                response: "validation",
+                errors: "Invalid gender: It must be either male or female.",
+            };
+
+            return returnData
+        }
+        
         const checkUser = await this.userRepository.detailData(id)
         
         if (!checkUser) {
@@ -165,14 +184,9 @@ class UserService {
         }
 
         let password
-        let birthdayDate
         
         if (data.password) {
             password = bcrypt.hashSync(data.password, 10)
-        }
-        
-        if (data.birthday_date) {
-            birthdayDate = new Date(data.birthday_date)
         }
 
         const dataUser: object = {
@@ -180,13 +194,9 @@ class UserService {
             password: password ?? undefined,
             profiles: {
                 update: {
-                    country_id : data.country_id ?? undefined,
-                    state_id : data.state_id ?? undefined,
-                    city_id : data.city_id ?? undefined,
                     firstName: data.first_name ?? undefined,
                     lastName: data.last_name ?? undefined,
-                    birthdayAt: birthdayDate ?? undefined,
-                    timezone: data.timezone ?? undefined
+                    gender: data.gender ?? undefined,
                 }
             }
         }

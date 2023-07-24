@@ -1,4 +1,4 @@
-# Test - PT. Surya Digital Teknologi
+# Test - Eduqat
 
 ## How to run
 - Yarn Install

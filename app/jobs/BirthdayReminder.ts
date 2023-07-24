@@ -18,7 +18,7 @@ class BirthdayReminder {
     try {
       let statusReminder;
       let totalReminder: number = 0
-      const users = await this.userRepository.getData();
+      const users = await this.userRepository.getData()
       await Promise.all(users.map(async (value: any) => {
         const currentDate = moment().format('YYYY-MM-DD')
   
@@ -27,7 +27,8 @@ class BirthdayReminder {
         const fullName = value.profiles.firstName + value.profiles.lastName;
         const email = value.email;
         const timezone = value.profiles.timezone;
-        const localTimezone = moment.tz(timezone);
+        const localTimezone = moment.tz(timezone)
+
         if (localTimezone) {
           const isSameMonthAndDate = birthday.format('MM-DD') === localTimezone.format('MM-DD') && currentDate != lastReminderBirthdayAt;
           if (isSameMonthAndDate) {

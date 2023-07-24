@@ -5,7 +5,8 @@
     "lint": "eslint .",
     "seed": "ts-node ./prisma/seeders/DatabaseSeeder.ts",
     "seed --reset": "ts-node ./prisma/seeders/DatabaseSeeder.ts",
-    "test": "cross-env PORT=3001 jest --testTimeout=5000"
+    "test": "cross-env PORT=3001 jest --testTimeout=5000",
+    "migrate": "prisma migrate dev --name"
   },
   "dependencies": {
     "@faker-js/faker": "^8.0.2",

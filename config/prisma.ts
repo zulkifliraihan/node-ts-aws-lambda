@@ -25,17 +25,19 @@ prisma.$use(async (params, next) => {
       }
 
       if (params.args.include) {
-        const includeKeys = Object.keys(params.args.include);
-
-        for (const key of includeKeys) {
-            if (params.args.include[key] === true) {
-                params.args.data[key] = { 
-                    update: {
-                        updatedAt: new Date(),
-                        deletedAt: new Date()
-                    } 
-                };
-          }
+        if (params.args.include) {
+            
+            const includeKeys = Object.keys(params.args.include);
+            for (const key of includeKeys) {
+                if (params.args.include[key] === true && key != 'categories') {
+                    params.args.data[key] = { 
+                        update: {
+                            updatedAt: new Date(),
+                            deletedAt: new Date()
+                        } 
+                    };
+                }   
+            }
         }
       }
     }

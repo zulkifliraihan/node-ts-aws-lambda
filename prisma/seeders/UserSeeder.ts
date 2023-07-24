@@ -2,30 +2,26 @@ import moment from "moment";
 import hashPassword from "../../app/helpers/SecurityHelper";
 import prisma from "../../config/prisma";
 import { faker } from '@faker-js/faker';
+import SecurityHelper from "../../app/helpers/SecurityHelper";
 
 
 class UserSeeder {
     async seed() {
         try {
             
-            for (let i = 0; i < 1000; i++) {
-                const randomNumber = Math.floor(Math.random() * 150) + 1;
+            for (let i = 0; i < 100; i++) {
                 const randomNumberRole = Math.floor(Math.random() * 2) + 1;
-                const pastDate = faker.date.past();
-                const formattedDate = moment(pastDate).format('YYYY-MM-DD');
+                const gender = ["male", "female"];
+                const randomIndex = Math.floor(Math.random() * gender.length);
 
                 const data: any = {
                     email: faker.internet.email(),
-                    password: faker.internet.password(),
+                    password: new SecurityHelper().hashPassword('123123123'),
                     profiles: {
                         create: {
-                            country_id : randomNumber,
-                            state_id : randomNumber,
-                            city_id : randomNumber,
                             firstName: faker.name.firstName(),
                             lastName: faker.name.lastName(),
-                            birthdayAt: faker.date.past().toISOString(),
-                            timezone: faker.address.timeZone()
+                            gender: gender[randomIndex],
                         }
                     },
                 };

@@ -2,13 +2,7 @@ import express from 'express';
 
 import RouteGroup from 'express-route-grouping';
 
-// ---- START : SECTION LOCATION -------
-import LocationRepository from '../app/repository/LocationRepository/LocationRepository';
-import LocationService from '../app/services/LocationService';
-import LocationController from '../app/controllers/LocationController';
-// ---- END : SECTION LOCATION -------
 
-// ---- START : SECTION USER -------
 import UserRepository from '../app/repository/UserRepository/UserRepository';
 import UserService from '../app/services/UserService';
 import UserController from '../app/controllers/UserController';
@@ -20,55 +14,77 @@ import RoleController from '../app/controllers/RoleController';
 import RoleRepository from '../app/repository/RoleRepository/RoleRepository';
 import RoleMiddleware from '../app/middlewares/RoleMiddleware';
 import ProfileRepository from '../app/repository/ProfileRepository/ProfileRepository';
-
-// ---- END : SECTION USER -------
+import CategoryRepository from '../app/repository/CategoryRepository/CategoryRepository';
+import CategoryService from '../app/services/CategoryService';
+import CategoryController from '../app/controllers/CategoryController';
+import CourseRepository from '../app/repository/CourseRepository/CourseRepository';
+import CourseService from '../app/services/CourseService';
+import CourseController from '../app/controllers/CourseController';
+import PublicService from '../app/services/PublicService';
+import PublicController from '../app/controllers/PublicController';
+import PaymentService from '../app/services/Webhook/PaymentService';
+import PaymentController from '../app/controllers/Webhook/PaymentController';
 
 const route = express.Router()
 
-
-// START : LOCATION -  CONTROLLER, SERVICE, REPOSITORY 
-const locationRepository = new LocationRepository()
-const locationService = new LocationService(locationRepository)
-const locationController = new LocationController(locationService)
-
-// END : LOCATION -  CONTROLLER, SERVICE, REPOSITORY 
-
-// END : PROFILE -  CONTROLLER, SERVICE, REPOSITORY 
-const profileRepository = new ProfileRepository()
 // START : PROFILE -  CONTROLLER, SERVICE, REPOSITORY
+const profileRepository = new ProfileRepository()
+// END : PROFILE -  CONTROLLER, SERVICE, REPOSITORY 
 
 // START : USER -  CONTROLLER, SERVICE, REPOSITORY 
 const userRepository = new UserRepository()
 const userService = new UserService(userRepository, profileRepository)
 const userController = new UserController(userService)
-
 // END : USER -  CONTROLLER, SERVICE, REPOSITORY 
+
+// START : CATEGORY COURSE -  CONTROLLER, SERVICE, REPOSITORY 
+const categoryRepository = new CategoryRepository()
+const categoryService = new CategoryService(categoryRepository)
+const categoryController = new CategoryController(categoryService)
+// END : CATEGORY COURSE -  CONTROLLER, SERVICE, REPOSITORY 
+
+// START : Course -  CONTROLLER, SERVICE, REPOSITORY 
+const courseRepository = new CourseRepository()
+const courseService = new CourseService(courseRepository)
+const courseController = new CourseController(courseService)
+// END : Course -  CONTROLLER, SERVICE, REPOSITORY 
 
 // START : AUTHENTICATION -  CONTROLLER, SERVICE, REPOSITORY 
 const authService = new AuthService(userRepository)
 const authController = new AuthController(authService)
 // END : AUTHENTICATION -  CONTROLLER, SERVICE, REPOSITORY 
 
+// START : PUBLIC -  CONTROLLER, SERVICE, REPOSITORY 
+const publicService = new PublicService(userRepository, courseRepository)
+const publicController = new PublicController(publicService)
+// END : PUBLIC -  CONTROLLER, SERVICE, REPOSITORY 
+
+// START : CONFIG -  CONTROLLER, SERVICE, REPOSITORY 
+const webhookService = new PaymentService()
+const webhookController = new PaymentController(webhookService)
+// END : CONFIG -  CONTROLLER, SERVICE, REPOSITORY 
+
+
+const config = new RouteGroup('/config', route)
+config.group('/', cg => {
+    cg.post('webhook/payment', webhookController.main.bind(webhookController))
+    
+})
 
 const publicApi = new RouteGroup('/public', route)
 publicApi.group('/', pbc => {
-    pbc.put('update-profile', JWTMiddleware, RoleMiddleware('public'), userController.updateForPublic.bind(userController))
+    pbc.put('update-profile', JWTMiddleware, RoleMiddleware('public'), publicController.updateProfile.bind(publicController))
+    
+    pbc.group('/course', pbcCourse => {
+        pbcCourse.get('/ready', JWTMiddleware, RoleMiddleware('public'), publicController.allCourse.bind(publicController))
+        pbcCourse.get('/enroll/:courseId', JWTMiddleware, RoleMiddleware('public'), publicController.enrollCourse.bind(publicController))
+    })
 })
+
 
 const authentication = new RouteGroup('/authentication', route)
 authentication.group('/', auth => {
     auth.post('/', authController.authentication.bind(authController))
-
-})
-
-const location = new RouteGroup('/location', route)
-location.group('/', loc => {
-    loc.get('/country', JWTMiddleware, RoleMiddleware('admin'), locationController.getDataCountry.bind(locationController))
-    loc.get('/state', JWTMiddleware, RoleMiddleware('admin'), locationController.getDataState.bind(locationController))
-    loc.get('/state/:countryId', JWTMiddleware, RoleMiddleware('admin'), locationController.getDataStateByCountryId.bind(locationController))
-    loc.get('/city', JWTMiddleware, RoleMiddleware('admin'), locationController.getDataCity.bind(locationController))
-    loc.get('/city/:stateId', JWTMiddleware, RoleMiddleware('admin'), locationController.getDataCityByStateId.bind(locationController))
-    loc.get('/timezone/:countryId/', JWTMiddleware, RoleMiddleware('admin'), locationController.dataTimezoneByCountryId.bind(locationController))
 })
 
 const users = new RouteGroup('/users', route)
@@ -79,6 +95,28 @@ users.group('/',user => {
     user.get('/:id', JWTMiddleware, RoleMiddleware('admin'), userController.detailData.bind(userController))
     user.put('/:id', JWTMiddleware, RoleMiddleware('admin'), userController.updateData.bind(userController))
     user.delete('/:id', JWTMiddleware, RoleMiddleware('admin'), userController.deleteData.bind(userController))
+
+})
+
+const categoryCourse = new RouteGroup('/category-course', route)
+categoryCourse.group('/',user => {
+
+    user.get('/', JWTMiddleware, RoleMiddleware('admin'), categoryController.getData.bind(categoryController))
+    user.post('/', JWTMiddleware, RoleMiddleware('admin'), categoryController.createData.bind(categoryController))
+    user.get('/:id', JWTMiddleware, RoleMiddleware('admin'), categoryController.detailData.bind(categoryController))
+    user.put('/:id', JWTMiddleware, RoleMiddleware('admin'), categoryController.updateData.bind(categoryController))
+    user.delete('/:id', JWTMiddleware, RoleMiddleware('admin'), categoryController.deleteData.bind(categoryController))
+
+})
+
+const course = new RouteGroup('/courses', route)
+course.group('/',user => {
+
+    user.get('/', JWTMiddleware, RoleMiddleware('admin'), courseController.getData.bind(courseController))
+    user.post('/', JWTMiddleware, RoleMiddleware('admin'), courseController.createData.bind(courseController))
+    user.get('/:id', JWTMiddleware, RoleMiddleware('admin'), courseController.detailData.bind(courseController))
+    user.put('/:id', JWTMiddleware, RoleMiddleware('admin'), courseController.updateData.bind(courseController))
+    user.delete('/:id', JWTMiddleware, RoleMiddleware('admin'), courseController.deleteData.bind(courseController))
 
 })
 

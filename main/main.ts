@@ -13,8 +13,8 @@ import MainQueue from '../app/queues/MainQueue';
 
 dotenv.config();
 const app = express();
-MainJobs();
-MainQueue.main()
+// MainJobs();
+// MainQueue.main()
 
 const JWTSecret: any = process.env.JWT_SECRET
 app.use(bodyParser.urlencoded({ extended: false }));
