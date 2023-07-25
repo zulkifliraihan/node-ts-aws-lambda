@@ -2,15 +2,19 @@ import { Request, Response } from "express";
 import PaymentService from "../../services/Webhook/PaymentService";
 import ReturnResponse from "../../traits/ReturnResponse";
 import ServiceType from "../../types/ServiceType";
+import prisma from "../../../config/prisma";
 
 class PaymentController{
     constructor(private paymentService: PaymentService) {}
 
     async test(req: Request, res: Response): Promise <any> {
+      const data = await prisma;
       return res.status(200).json({
-        message: "Success"
+        message: "Success",
+        data
       });
     } 
+    
     async main(req: Request, res: Response): Promise <any> {
         try {
 
