@@ -1,33 +1,31 @@
+// import cron from 'node-cron';
 import express, { Request, Response } from 'express';
+import dotenv from 'dotenv';
 import route from '../routes/api';
 import bodyParser from 'body-parser';
 import { sessionConfig } from '../config/session';
-import serverless from 'serverless-http';
 
 
-const app = express();
+dotenv.config();
+const app = express()
 
+const JWTSecret: any = process.env.JWT_SECRET
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(sessionConfig);
 
-app.get('/', async (req: Request, res: Response) => {
-    res.status(200).send('Hello World!');
-  });
-  
-app.get('/welcome', async (req: Request, res: Response) => {
-    res.status(200).send('Hello Zulkifli!');
+const port = process.env.port || process.env.PORT || 3000
+const appName = process.env.APP_NAME
+const appEnv = process.env.APP_ENV
+
+
+app.get('/', (req: Request, res: Response) => {
+    res.send('Test - PT.Surya Digital Teknologi!');
 });
 
 app.use('/api', route)
 
-app.get('/api/welcome', (req: Request, res: Response) => {
-    res.send('Test - PT.Surya Digital Teknologi!');
-});
 
-// app.listen(port, () => {
-//     console.log(`\n${ appName } (${appEnv}) listening to http://localhost:${ port }`)
-// })
-
-export const handler = serverless(app);
-
+app.listen(port, () => {
+    console.log(`\n${ appName } (${appEnv}) listening to http://localhost:${ port }`)
+})
