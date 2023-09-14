@@ -1,15 +1,12 @@
-// import cron from 'node-cron';
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import route from '../routes/api';
 import bodyParser from 'body-parser';
 import { sessionConfig } from '../config/session';
 
-
 dotenv.config();
 const app = express()
 
-const JWTSecret: any = process.env.JWT_SECRET
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(sessionConfig);
